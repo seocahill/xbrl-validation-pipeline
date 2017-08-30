@@ -11,5 +11,5 @@
 #  unit_test: '[ true = true ]'                        # optional
 #  quiet: false                                        # optional
 
-test:
-  command: 'docker-compose run --rm ruby app tests/validation_tests.rb'
+run_tests:
+  command: 'docker-compose run --rm app ruby tests/validation_tests.rb'

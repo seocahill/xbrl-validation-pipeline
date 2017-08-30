@@ -8,7 +8,9 @@ module DummyApp
       uri = URI("http://arelle:8080/rest/xbrl/validation?file=/ixbrl/#{filename}&media=json")
       begin
         request = Net::HTTP.get(uri)
-        JSON.parse(request)
+        response = JSON.parse(request)
+        puts JSON.pretty_generate(response)
+        response
       rescue Exception => e
         e.to_s
       end
