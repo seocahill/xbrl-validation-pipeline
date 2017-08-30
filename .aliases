@@ -12,4 +12,4 @@
 #  quiet: false                                        # optional
 
 run_tests:
-  command: 'docker-compose run --rm app ruby tests/validation_tests.rb'
+  command: 'docker-compose run --rm app ruby tests/validation_tests.rb $0'
