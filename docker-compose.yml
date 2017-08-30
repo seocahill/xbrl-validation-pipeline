@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  app:
+    image: ruby:alpine
+    volumes:
+      - .:/tests
+    depends_on:
+      - validator
+      - arelle
+  
+  validator:
+    build: /Users/seocahill/code/xbrl_validator
+    ports:
+      - "4567:4567"
+    volumes: 
+      - /Users/seocahill/code/xbrl_validator:/app
+
+  arelle:
+    image: seocahill/arelle:latest
+    ports:
+      - "8080:8080"
+    volumes: 
+      - ./ixbrl:/ixbrl
