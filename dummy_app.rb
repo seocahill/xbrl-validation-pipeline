@@ -5,12 +5,22 @@ require 'logger'
 module DummyApp
   class Base
 
-    def init
-      @log = Logger.new(File.new(File.join(__dir__, "logs", "error.log")),'w')
+    def initialize
+      logfile = File.new(File.join(__dir__, "logs", "error.log"), 'w')
+      @log = Logger.new(logfile)
     end
 
-    def request_validation(filename)
+    def arelle_validation(filename)
       uri = URI("http://arelle:8080/rest/xbrl/validation?file=/ixbrl/#{filename}&media=json")
+      request_validation(filename, uri)
+    end
+
+    def business_validation(filename)
+      uri = URI("http://validator:4567/validate/#{filename}")
+      request_validation(filename, uri)
+    end
+
+    def request_validation(filename, uri)
       begin
         request = Net::HTTP.get(uri)
         response = JSON.parse(request)
