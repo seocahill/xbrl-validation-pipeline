@@ -25,20 +25,24 @@ class DimensionParserTest < MiniTest::Test
 
   def test_ixbrl_schema_validation
     response = @app.request_validation("non-numericx.html")
-    assert_includes message_levels(response), "error", "malformed tags throw errors"
+    assert_includes message_levels(response), "error", "incorrect nomNumieric tags throw errors"
     assert_equal 2, error_messages(response).length, "two errors"
     expected = ["587", "884"]
     assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
   def test_taxonomy_reference_check
-    skip "could leave schemaRef empty suppose"
+    skip "requires custom test to check if schemaRef value is valid for Irish Tax purposes"
   end
 
   def test_ixbrl_specification_rules
-    skip "maybe try a tuple element without the correct ref"
     # For each token in {footnote references} there MUST exist an ix:footnote element in the Inline XBRL Document
     # Set with a {footnote id} property which has a matching value.
+    response = @app.request_validation("unused-tuple.html")
+    assert_includes message_levels(response), "error", "Inline XBRL non-nil tuple requires content: ix:fraction, ix:nonFraction, ix:nonNumeric or ix:tuple - unused-tuple.html 5389\n"
+    assert_equal 1, error_messages(response).length, "one errors"
+    expected = ["5389"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
   def test_dts_discovery
