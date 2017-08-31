@@ -31,10 +31,6 @@ class ValidationTests < MiniTest::Test
     assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
-  def test_taxonomy_reference_check
-    skip "requires custom test to check if schemaRef value is valid for Irish Tax purposes"
-  end
-
   def test_ixbrl_specification_rules
     response = @app.request_validation("unused-tuple.html")
     assert_includes message_levels(response), "error", "Inline XBRL non-nil tuple requires content: ix:fraction, ix:nonFraction, ix:nonNumeric or ix:tuple - unused-tuple.html 5389\n"
@@ -60,28 +56,18 @@ class ValidationTests < MiniTest::Test
   end
 
   def test_xbrl_specification_rules_period_type
-    skip 'Error in "http://www.xbrl.org/uk/gaap/core/2009-09- 01#ControllingPartyUltimateControllingParty (true)." For an item element with periodType="duration," the period MUST contain a "forever" element or a set of "startDate" and "endDate" elements.'
-
+    response = @app.request_validation("invalid-context.html")
+    assert_includes message_levels(response), "error",  'For an item element with periodType="duration," the period MUST contain a "forever" element or a set of "startDate" and "endDate" elements.'
+    assert_equal 2, error_messages(response).length, "two errors"
+    expected = ["849", "1771"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
   def test_xbrl_specification_rules_dimensions
-    skip
-  end
-
-  def test_revenue_business_rules
-    skip "tested on client right now but could do it here"
-    # Company Name (uk- bus:EntityCurrentLegalOrRegisteredNa me) is missing
-    # Period Start Date (uk- bus:StartDateForPeriodCoveredByRep ort) is missing
-    # Period End Date (uk- bus:EndDateForPeriodCoveredByRepo rt) is missing
-    # Period End Date (uk- bus:EndDateForPeriodCoveredByRepo rt) is <end_date> but must be 2011-12- 31 or later
-    # Profit Loss Before Tax (uk- gaap:ProfitLossOnOrdinaryActivitiesBef oreTax or ifrs:ProfitLossBeforeTax) is missing
-    # Inconsistent duplicate facts, <fact name>, for context <context>.
-    # Context entity identifier scheme (<value>) is not supported n/a
-    # Contexts do not all use the same identifier and the same scheme.
-    # Companies Registration Office Number (ie- common:CompaniesRegistrationOffice Number) is missing If there is at least one context entity where the identifier scheme is 'http://www.cro.ie/'
-    # Context entity identifier (<value>) is not consistent with Revenue records (<value)>)
-    # Report period start date cannot be later than the selected Revenue accounting period start date (<value>).
-    # Report period end date cannot be before the selected Revenue accounting period end date (<value>).
-    # Report period end date must fall within the selected Revenue accounting period.
+    response = @app.request_validation("invalid-dimensions.html")
+    assert_includes message_levels(response), "error",  'Fact "x" context "y" dimensionally not valid'
+    assert_equal 2, error_messages(response).length, "two errors"
+    expected = ["824", "1642"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 end
