@@ -5,4 +5,16 @@ module TestHelpers
       message["level"]
     end
   end
+
+  def error_messages(response)
+    response["log"].select do |message|
+      message["level"] == "error"
+    end
+  end
+
+  def error_lines(response)
+    error_messages(response).map do |message|
+      message["message"]["line"] || message["refs"][0]["sourceLine"].to_s
+    end.compact
+  end
 end

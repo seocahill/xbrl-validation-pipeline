@@ -16,11 +16,19 @@ class DimensionParserTest < MiniTest::Test
   end
 
   def test_xml_well_formed
-    skip "euro or ampersand encoding has caught me out here before"
+    response = @app.request_validation("invalid-xml.html")
+    assert_includes message_levels(response), "error", "unescaped ampersand causes malformed error"
+    assert_equal 2, error_messages(response).length, "two cases of rogue ampersand"
+    expected = ["588", "936"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
-  def test_ixbrl_and_xhtml_validation
-    skip "cvc-complex-type.2.4.a: Invalid content was found starting with element 'ix:nonNumericx'"
+  def test_ixbrl_schema_validation
+    response = @app.request_validation("non-numericx.html")
+    assert_includes message_levels(response), "error", "malformed tags throw errors"
+    assert_equal 2, error_messages(response).length, "two errors"
+    expected = ["583", "880"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
   def test_taxonomy_reference_check

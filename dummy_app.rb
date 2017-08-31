@@ -9,7 +9,7 @@ module DummyApp
       begin
         request = Net::HTTP.get(uri)
         response = JSON.parse(request)
-        puts JSON.pretty_generate(response)
+        # puts JSON.pretty_generate(response)
         response
       rescue Exception => e
         e.to_s
