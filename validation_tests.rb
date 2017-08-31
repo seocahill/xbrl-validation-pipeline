@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require_relative 'dummy_app'
 require_relative 'test_helper'
 
-class DimensionParserTest < MiniTest::Test
+class ValidationTests < MiniTest::Test
   include TestHelpers
 
   def setup 
@@ -36,8 +36,6 @@ class DimensionParserTest < MiniTest::Test
   end
 
   def test_ixbrl_specification_rules
-    # For each token in {footnote references} there MUST exist an ix:footnote element in the Inline XBRL Document
-    # Set with a {footnote id} property which has a matching value.
     response = @app.request_validation("unused-tuple.html")
     assert_includes message_levels(response), "error", "Inline XBRL non-nil tuple requires content: ix:fraction, ix:nonFraction, ix:nonNumeric or ix:tuple - unused-tuple.html 5389\n"
     assert_equal 1, error_messages(response).length, "one errors"
@@ -46,15 +44,28 @@ class DimensionParserTest < MiniTest::Test
   end
 
   def test_dts_discovery
-    skip "XBRL Load Error: XBRL element http://www.xbrl.org/uk/gaap/core/2009-09- 01#ControllingPartyUltimateControllingPartyx with the reported value (true), context (FY2009) is presumed to be a taxonomy element named http://www.xbrl.org/uk/gaap/core/2009-09- 01#ControllingPartyUltimateControllingPartyx but it was not found in the loaded taxonomies."
+    response = @app.request_validation("invalid-concept-name.html")
+    assert_includes message_levels(response), "error", "XBRL Load Error: XBRL element was not found in the loaded taxonomies."
+    assert_equal 1, error_messages(response).length, "one errors"
+    expected = ["2693"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
   def test_schema_xbrl_and_taxonomy_validation
-    skip "Error message: cvc-datatype-valid.1.2.1: 'truex' is not a valid value for 'boolean'."
+    response = @app.request_validation("invalid-boolean.html")
+    assert_includes message_levels(response), "error", "Error message: cvc-datatype-valid.1.2.1: 'truex' is not a valid value for 'boolean'."
+    assert_equal 1, error_messages(response).length, "one errors"
+    expected = ["39"]
+    assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
-  def test_xbrl_specification_rules
+  def test_xbrl_specification_rules_period_type
     skip 'Error in "http://www.xbrl.org/uk/gaap/core/2009-09- 01#ControllingPartyUltimateControllingParty (true)." For an item element with periodType="duration," the period MUST contain a "forever" element or a set of "startDate" and "endDate" elements.'
+
+  end
+
+  def test_xbrl_specification_rules_dimensions
+    skip
   end
 
   def test_revenue_business_rules
