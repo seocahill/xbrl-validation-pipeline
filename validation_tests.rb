@@ -27,7 +27,7 @@ class DimensionParserTest < MiniTest::Test
     response = @app.request_validation("non-numericx.html")
     assert_includes message_levels(response), "error", "malformed tags throw errors"
     assert_equal 2, error_messages(response).length, "two errors"
-    expected = ["583", "880"]
+    expected = ["587", "884"]
     assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
