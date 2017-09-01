@@ -12,9 +12,8 @@ class IrishBusinessRulesTest < MiniTest::Test
   end
 
   def test_taxonomy_reference_check
-    # skip "requires custom test to check if schemaRef value is valid for Irish Tax purposes"
-    puts "response is #{@response}"
-    assert_equal "valid", @response["schema_ref_test"], "schemaRef must be one of set allow by Irish Tax Authority"
+    expected = "invalid: http://www.xbrl-ie.net/public/ci/2012-12-01/gaap/core/2012-12-01/us-gaap-full-2012-12-01.xsd is not a valid schema"
+    assert_equal expected, @response["schema_ref_test"], "schemaRef must be one of set allow by Irish Tax Authority"
   end
 
   def test_company_name
