@@ -13,7 +13,7 @@ class IrishBusinessRulesTest < MiniTest::Test
 
   def test_taxonomy_reference_check
     expected = "invalid: http://www.xbrl-ie.net/public/ci/2012-12-01/gaap/core/2012-12-01/us-gaap-full-2012-12-01.xsd is not a valid schema"
-    assert_equal expected, @response["schema_ref_test"], "schemaRef must be one of set allow by Irish Tax Authority"
+    assert_equal expected, @response["schema_ref"], "schemaRef must be one of set allow by Irish Tax Authority"
   end
 
   def test_mandatory_tags_present
@@ -21,40 +21,35 @@ class IrishBusinessRulesTest < MiniTest::Test
     assert_equal expected, @response["mandatory_tags_present"], "Mandatory tags must be present"
   end
 
-  def test_start_date
-    skip # Period Start Date (uk- bus:StartDateForPeriodCoveredByRep ort) is missing
-     # Report period start date cannot be later than the selected Revenue accounting period start date (<value>).
-  end
-
-  def test_end_date_present
-    skip # Period End Date (uk- bus:EndDateForPeriodCoveredByRepo rt) is missing
-    # Period End Date (uk- bus:EndDateForPeriodCoveredByRepo rt) is <end_date> but must be 2011-12- 31 or later
-    # Report period end date cannot be before the selected Revenue accounting period end date (<value>).
-    # Report period end date must fall within the selected Revenue accounting period.
-  end
-
-  def test_profit_loss
-    skip # Profit Loss Before Tax (uk- gaap:ProfitLossOnOrdinaryActivitiesBef oreTax or ifrs:ProfitLossBeforeTax) is missing
+  def test_period_too_long_ago
+    expected = "invalid: Period End Date is 2010-12-31 but must be 2011-12-31 or later"
+    assert_equal expected, @response["period_dates"], "Period must be later than 2011"
   end
 
   def test_duplicate_facts
-    skip # Inconsistent duplicate facts, <fact name>, for context <context>.
+    expected_facts = []
+    expected = { message: "invalid", duplicate_facts: expected_facts }
+    assert_equal expected, @response["duplicate_facts"], "Cant have duplicate facts"
   end
 
-  def context_id_scheme
-    skip # Context entity identifier scheme (<value>) is not supported n/a
+  def text_context_scheme_consistency
+    expected = "invalid: Contexts do not all use the same identifier and the same scheme"
+    assert_equal expected, @response["context_scheme_consistent"], "Use only one scheme on all contexts"
   end
 
-  def context_schemes_consistent
-    skip # Contexts do not all use the same identifier and the same scheme.
+  def test_context_scheme_allowed
+    expected = "invalid: http://tax.gov.uk is not a valid schema"
+    assert_equal expected, @response["context_scheme_allowed"], "Invalid context scheme"
   end
 
-  def cro_number
-    skip # Companies Registration Office Number (ie- common:CompaniesRegistrationOffice Number) is missing If there is at least one context entity where the identifier scheme is 'http://www.cro.ie/'
+  def test_cro_number_present
+    expected = "invalid: Must tag CRO number if using http://www.cro.ie/ identifier scheme"
+    assert_equal expected, @response["cro_number_required"], "CRO number is required"
   end
 
-  def context_entity_id
-    skip # Context entity identifier (<value>) is not consistent with Revenue records (<value)>)
+  def test_context_identifiers
+    expected = "invalid: One or more context_identifer numbers malformed or missing"
+    assert_equal expected, @response["context_identifiers"], "Missing or malformed context identifier"
   end
 
 end
