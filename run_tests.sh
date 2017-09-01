@@ -3,9 +3,12 @@
 docker-compose up -d
 printf '\nwaiting for validation services to boot'; 
 
-until $(curl --output /dev/null --silent --head --fail http://0.0.0.0:4567); do   
+TRIES = 0
+
+until $(curl --output /dev/null --silent --head --fail http://0.0.0.0:4567) || [ $TRIES -eq 10 ]; do  
+  TRIES++
   printf '.'; 
-  sleep 1; 
+  sleep 1;
 done
 
 printf '\n'
