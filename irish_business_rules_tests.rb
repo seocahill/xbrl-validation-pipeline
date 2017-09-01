@@ -13,7 +13,8 @@ class IrishBusinessRulesTest < MiniTest::Test
 
   def test_taxonomy_reference_check
     # skip "requires custom test to check if schemaRef value is valid for Irish Tax purposes"
-    assert_true @response.errors.length, 10, "has errors"
+    puts "response is #{@response}"
+    assert_equal "valid", @response["schema_ref_test"], "schemaRef must be one of set allow by Irish Tax Authority"
   end
 
   def test_company_name

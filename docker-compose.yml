@@ -5,8 +5,8 @@ services:
     volumes:
       - .:/tests
     depends_on:
-      - validator
       - arelle
+      - validator
   
   validator:
     build: /Users/seocahill/code/xbrl_validator
@@ -14,6 +14,9 @@ services:
       - "4567:4567"
     volumes: 
       - /Users/seocahill/code/xbrl_validator:/app
+      - ./ixbrl:/ixbrl
+    entrypoint: jruby
+    command: /app/app.rb
 
   arelle:
     image: seocahill/arelle:latest
