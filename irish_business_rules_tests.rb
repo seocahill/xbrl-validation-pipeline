@@ -16,9 +16,9 @@ class IrishBusinessRulesTest < MiniTest::Test
     assert_equal expected, @response["schema_ref_test"], "schemaRef must be one of set allow by Irish Tax Authority"
   end
 
-  def test_company_name
-    expected = "invalid: uk-bus:EntityCurrentLegalOrRegisteredName must be present"
-    assert_equal expected, @response["company_name_present"], "Company name must be tagged"
+  def test_mandatory_tags_present
+    expected = "invalid: the following tags are missing or empty uk-bus:EntityCurrentLegalOrRegisteredName"
+    assert_equal expected, @response["mandatory_tags_present"], "Mandatory tags must be present"
   end
 
   def test_start_date
