@@ -17,7 +17,8 @@ class IrishBusinessRulesTest < MiniTest::Test
   end
 
   def test_company_name
-    skip # Company Name (uk- bus:EntityCurrentLegalOrRegisteredNa me) is missing
+    expected = "invalid: uk-bus:EntityCurrentLegalOrRegisteredName must be present"
+    assert_equal expected, @response["company_name_present"], "Company name must be tagged"
   end
 
   def test_start_date
