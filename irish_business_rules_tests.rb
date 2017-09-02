@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require_relative 'dummy_app'
 require_relative 'test_helper'
 
-class IrishBusinessRulesTest < MiniTest::Test
+class IrishBusinessRulesInvalidDocumentTest < MiniTest::Test
   include TestHelpers
 
   def setup 
@@ -35,7 +35,7 @@ class IrishBusinessRulesTest < MiniTest::Test
     refute_nil actual, "director name duplicate fact"
     assert_equal [751, 731], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "director name conflict line numbers"
 
-    # negative and positive currency value for same fact
+    # negative and positive currency value for the same fact
     actual = duplicate_facts.select {|f| f["name"] == "uk-gaap:ProfitLossAccountReserve" }
     assert_equal actual.length, 2, "negative and positive currency value duplicate facts"
     assert_equal [2057, 2021], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
@@ -53,13 +53,13 @@ class IrishBusinessRulesTest < MiniTest::Test
     assert_equal [1745, 1735], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "wrongly tagged text line numbers"
   end
 
-  def text_context_scheme_consistency
+  def test_context_scheme_consistency
     expected = "invalid: Contexts do not all use the same identifier and the same scheme"
     assert_equal expected, @response["context_scheme_consistent"], "Use only one scheme on all contexts"
   end
 
   def test_context_scheme_allowed
-    expected = "invalid: http://tax.gov.uk is not a valid schema"
+    expected = "invalid: http://tax.gov.uk/ is not a valid scheme"
     assert_equal expected, @response["context_scheme_allowed"], "Invalid context scheme"
   end
 
@@ -73,4 +73,14 @@ class IrishBusinessRulesTest < MiniTest::Test
     assert_equal expected, @response["context_identifiers"], "Missing or malformed context identifier"
   end
 
+end
+
+class IrishBusinessRulesValidDocumentTest < MiniTest::Test
+
+  def test_valid_document_passes_validation
+    response = DummyApp::Base.new.business_validation("valid-file.html")
+    expected = response.values.map { |v| v.is_a?(Hash) ? v["message"] : v }.uniq
+    
+    assert_equal ["valid"], expected, "All valiations should pass"
+  end
 end
