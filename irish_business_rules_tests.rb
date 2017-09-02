@@ -22,14 +22,35 @@ class IrishBusinessRulesTest < MiniTest::Test
   end
 
   def test_period_too_long_ago
-    expected = "invalid: Period End Date is 2010-12-31 but must be 2011-12-31 or later"
+    expected = "invalid: Period End Date is 2010-10-31 but must be 2011-12-31 or later"
     assert_equal expected, @response["period_dates"], "Period must be later than 2011"
   end
 
   def test_duplicate_facts
-    expected_facts = []
-    expected = { message: "invalid", duplicate_facts: expected_facts }
-    assert_equal expected, @response["duplicate_facts"], "Cant have duplicate facts"
+    assert_equal "invalid", @response["duplicate_facts"]["message"], "Cant have duplicate facts"
+
+    duplicate_facts = @response["duplicate_facts"]["duplicate_facts"]
+    # whitespace error in director name
+    actual = duplicate_facts.find { |f| f["name"] == "uk-bus:NameEntityOfficer" }
+    refute_nil actual, "director name duplicate fact"
+    assert_equal [751, 731], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "director name conflict line numbers"
+
+    # negative and positive currency value for same fact
+    actual = duplicate_facts.select {|f| f["name"] == "uk-gaap:ProfitLossAccountReserve" }
+    assert_equal actual.length, 2, "negative and positive currency value duplicate facts"
+    assert_equal [2057, 2021], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [2557, 2021], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+
+    # incorrect context for comparative with opening and closing balance e.g. shareholders funds
+    actual = duplicate_facts.select {|f| f["name"] == "ie-common:LoansQuasiLoansDirectors"}
+    assert_equal actual.length, 2, "incorrect context duplicate facts"
+    assert_equal [5758, 5730], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [5762, 5734], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+
+    # nonNumeric tag added to adjacent column of text row in error
+    actual = duplicate_facts.find {|f| f["name"] == "uk-aurep:StatementOnScopeAuditReport"}
+    refute_nil actual, "wrongly tagged duplicate fact"
+    assert_equal [1745, 1735], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "wrongly tagged text line numbers"
   end
 
   def text_context_scheme_consistency
