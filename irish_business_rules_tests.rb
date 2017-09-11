@@ -38,19 +38,19 @@ class IrishBusinessRulesInvalidDocumentTest < MiniTest::Test
     # negative and positive currency value for the same fact
     actual = duplicate_facts.select {|f| f["name"] == "uk-gaap:ProfitLossAccountReserve" }
     assert_equal actual.length, 2, "negative and positive currency value duplicate facts"
-    assert_equal [2057, 2021], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
-    assert_equal [2557, 2021], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [2055, 2019], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [2555, 2019], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
 
     # incorrect context for comparative with opening and closing balance e.g. shareholders funds
     actual = duplicate_facts.select {|f| f["name"] == "ie-common:LoansQuasiLoansDirectors"}
     assert_equal actual.length, 2, "incorrect context duplicate facts"
-    assert_equal [5758, 5730], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
-    assert_equal [5762, 5734], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [5756, 5728], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
+    assert_equal [5760, 5732], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
 
     # nonNumeric tag added to adjacent column of text row in error
     actual = duplicate_facts.find {|f| f["name"] == "uk-aurep:StatementOnScopeAuditReport"}
     refute_nil actual, "wrongly tagged duplicate fact"
-    assert_equal [1745, 1735], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "wrongly tagged text line numbers"
+    assert_equal [1743, 1733], [actual["line_number"], actual["conflicting_fact"]["line_number"]], "wrongly tagged text line numbers"
   end
 
   def test_context_scheme_consistency
@@ -71,6 +71,16 @@ class IrishBusinessRulesInvalidDocumentTest < MiniTest::Test
   def test_context_identifiers
     expected = "invalid: One or more context_identifer numbers malformed or missing"
     assert_equal expected, @response["context_identifiers"], "Missing or malformed context identifier"
+  end
+
+  def test_ixbrl_validation
+    message_1 = "-1:-1: ERROR: cvc-length-valid: Value '\n                          \n                        ' with length = '52' is not facet-valid with respect to length '0' for type '#AnonType_fixedItemType'."
+    message_2 = "-1:-1: ERROR: cvc-complex-type.2.2: Element 'uk-direp:DirectorSigningReport' must have no element [children], and the value must be valid."
+    actual = @response["validate_schema"]
+    assert_equal actual["message"], "invalid"
+    assert_equal actual["errors"].length, 2
+    assert_includes actual["errors"], message_1
+    assert_includes actual["errors"], message_2
   end
 
 end
