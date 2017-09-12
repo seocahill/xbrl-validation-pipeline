@@ -3,7 +3,7 @@ services:
   app:
     image: ruby:alpine
     volumes:
-      - .:/tests
+      - .:/app
     depends_on:
       - arelle
       - validator

@@ -1,3 +1,7 @@
+ENV['RACK_ENV'] = 'test'
+require 'minitest/autorun'
+require_relative '../dummy_app'
+
 module TestHelpers
 
   def message_levels(response)

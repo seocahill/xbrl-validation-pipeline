@@ -1,6 +1,3 @@
-ENV['RACK_ENV'] = 'test'
-require 'minitest/autorun'
-require_relative 'dummy_app'
 require_relative 'test_helper'
 
 class IrishBusinessRulesInvalidDocumentTest < MiniTest::Test

@@ -15,7 +15,7 @@ if [ $TRIES -eq 15 ]; then
   printf '\nno response from server'
 else
   printf '\nrunning tests\n'
-  docker-compose run --rm app ruby tests/irish_business_rules_tests.rb $@
+  docker-compose run --rm --workdir="/app" app rake test $@;
 fi
 
 printf '\ndone! stopping services\n'; 
