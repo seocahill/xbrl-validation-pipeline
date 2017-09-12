@@ -9,11 +9,10 @@ services:
       - validator
   
   validator:
-    build: /Users/seocahill/code/xbrl_validator
+    image: seocahill/xbrl-validator
     ports:
       - "4567:4567"
     volumes: 
-      - /Users/seocahill/code/xbrl_validator:/app
       - ./ixbrl:/ixbrl
     entrypoint: jruby
     command: /app/app.rb
