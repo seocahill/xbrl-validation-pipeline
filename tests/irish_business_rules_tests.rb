@@ -40,9 +40,7 @@ class IrishBusinessRulesInvalidDocumentTest < MiniTest::Test
 
     # incorrect context for comparative with opening and closing balance e.g. shareholders funds
     actual = duplicate_facts.select {|f| f["name"] == "ie-common:LoansQuasiLoansDirectors"}
-    assert_equal actual.length, 2, "incorrect context duplicate facts"
     assert_equal [5756, 5728], [actual[0]["line_number"], actual[0]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
-    assert_equal [5760, 5732], [actual[1]["line_number"], actual[1]["conflicting_fact"]["line_number"]], "currency value conflict line numbers"
 
     # nonNumeric tag added to adjacent column of text row in error
     actual = duplicate_facts.find {|f| f["name"] == "uk-aurep:StatementOnScopeAuditReport"}

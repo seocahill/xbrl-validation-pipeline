@@ -16,7 +16,7 @@ class ValidationTests < MiniTest::Test
     response = @app.arelle_validation("invalid-xml.html")
     assert_includes message_levels(response), "error", "unescaped ampersand causes malformed error"
     assert_equal 2, error_messages(response).length, "two cases of rogue ampersand"
-    expected = ["588", "936"]
+    expected = ["574", "890"]
     assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
@@ -48,7 +48,7 @@ class ValidationTests < MiniTest::Test
     response = @app.arelle_validation("invalid-boolean.html")
     assert_includes message_levels(response), "error", "Error message: cvc-datatype-valid.1.2.1: 'truex' is not a valid value for 'boolean'."
     assert_equal 1, error_messages(response).length, "one errors"
-    expected = ["39"]
+    expected = ["28"]
     assert_empty expected - error_lines(response), "correct errors are detected"
   end
 
