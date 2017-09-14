@@ -1,7 +1,7 @@
 # xbrl-validation-pipeline
 This stack takes an iXBRL instance document as an input and validates it against referenced XSD schemas and custom business rules.
 
-The only supported Discoverable Taxonomy Set is the 2012 Irish GAAP taxonomy extension to the 2012 U GAAP taxonomy. This will soon be deprecated in favour of the forthcoming FRS102 taxonomy.
+The only supported Discoverable Taxonomy Set is the 2012 Irish GAAP taxonomy extension to the 2012 UK GAAP taxonomy. This will soon be deprecated in favour of the forthcoming FRS 102 taxonomy.
 
 The implemented custom validations rules are listed in the document "Electronic Filing of Financial Statements (iXBRL)" which is published on the Irish Revenue Commissioners website - www.revenue.ie.
 
